@@ -1,5 +1,6 @@
 "use strict";
-const TypeUtil_1 = require('./TypeUtil');
+Object.defineProperty(exports, "__esModule", { value: true });
+const TypeUtil_1 = require("./TypeUtil");
 class ParamParser {
     static parseParams(parameters) {
         if (parameters) {
@@ -12,8 +13,9 @@ class ParamParser {
             return parameters.map((param, i) => {
                 let paramString = "";
                 paramString += param.name;
-                if (param.optional && i > lastMandatoryParamIdx)
+                if (param.optional && i > lastMandatoryParamIdx) {
                     paramString += "?";
+                }
                 paramString += ": " + TypeUtil_1.TypeUtil.sapUiTypeToTSType(param.type);
                 return paramString;
             }).reduce((a, b) => {

@@ -1,4 +1,4 @@
-import { IndentedOutputWriter } from '../util';
+import { IndentedOutputWriter } from "../util";
 export declare class PropertyParser {
     protected writer: IndentedOutputWriter;
     protected property: ts_gen.api.Property;

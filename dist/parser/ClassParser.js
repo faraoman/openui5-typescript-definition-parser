@@ -1,7 +1,8 @@
 "use strict";
-const util_1 = require('../util');
-const PropertyParser_1 = require("./PropertyParser");
+Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = require("../util");
 const MethodParser_1 = require("./MethodParser");
+const PropertyParser_1 = require("./PropertyParser");
 class ClassParser {
     constructor(writer, classSymbol, namespacePrefix) {
         this.writer = writer;

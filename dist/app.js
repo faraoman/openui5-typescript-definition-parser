@@ -1,9 +1,10 @@
 "use strict";
-const https_1 = require('https');
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = require("fs");
+const https_1 = require("https");
 const parser_1 = require("./parser");
-const util_1 = require('./util');
-const util_2 = require('./util');
-const fs_1 = require('fs');
+const util_1 = require("./util");
+const util_2 = require("./util");
 function parseDefinitions(config) {
     if (!config) {
         config = {};
@@ -13,35 +14,37 @@ function parseDefinitions(config) {
             "sap.m",
             "sap.ui.core",
             "sap.ui.layout",
-            "sap.ui.unified"
+            "sap.ui.unified",
+            "sap.ui.table",
+            "sap.uxap"
         ];
     }
     if (!config.outFilePath) {
         config.outFilePath = pathJoin(["output", "ui5"], "\\") + ".d.ts";
     }
     if (!config.methodExceptionsFile) {
-        config.methodExceptionsFile = 'parse-configurations/MethodExceptions.json';
+        config.methodExceptionsFile = "parse-configurations/MethodExceptions.json";
     }
     if (!config.typeConfigFile) {
         config.typeConfigFile = "parse-configurations/TypeConfig.json";
     }
-    util_1.TypeUtil._config = JSON.parse(fs_1.readFileSync(config.typeConfigFile, 'utf-8'));
-    parser_1.MethodParser._exceptions = JSON.parse(fs_1.readFileSync(config.methodExceptionsFile, 'utf-8'));
+    util_1.TypeUtil._config = JSON.parse(fs_1.readFileSync(config.typeConfigFile, "utf-8"));
+    parser_1.MethodParser._exceptions = JSON.parse(fs_1.readFileSync(config.methodExceptionsFile, "utf-8"));
     let libs = [];
     function pathJoin(parts, sep) {
-        var separator = sep || '/';
-        var replace = new RegExp(separator + '{1,}', 'g');
+        let separator = sep || "/";
+        let replace = new RegExp(separator + "{1,}", "g");
         return parts.join(separator).replace(replace, separator);
     }
     for (let ns of config.namespaces) {
         let namespaceWithSlashes = ns.replace(/\./g, "/");
         let namespaceNames = [];
         https_1.get("https://openui5.hana.ondemand.com/test-resources/" + namespaceWithSlashes + "/designtime/api.json", (res) => {
-            let body = '';
-            res.on('data', (chunk) => {
+            let body = "";
+            res.on("data", (chunk) => {
                 body += chunk;
             });
-            res.on('end', () => {
+            res.on("end", () => {
                 console.log("JSON Definition for namespace " + ns + " loaded.");
                 let rootObj = JSON.parse(body);
                 libs.push(rootObj);

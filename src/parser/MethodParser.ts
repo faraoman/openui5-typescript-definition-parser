@@ -1,6 +1,6 @@
-import {IndentedOutputWriter, TypeUtil, ParamParser} from '../util';
-import {readFileSync} from 'fs';
-export interface MethodException {
+import { readFileSync } from "fs";
+import { IndentedOutputWriter, ParamParser, TypeUtil } from "../util";
+export interface IMethodException {
     methodName: string;
     applicableReturnTypes: string[];
     applicableSignatures: string[];
@@ -10,22 +10,22 @@ export interface MethodException {
 
 export class MethodParser {
 
-    public static _exceptions: MethodException[] = null;
+    public static _exceptions: IMethodException[] = null;
 
     constructor(protected writer: IndentedOutputWriter, protected method: ts_gen.api.Method, protected symbolContext: ts_gen.api.Symbol) {
 
     }
 
-    public generate() {
+    public generate(): string {
         this.writer.newLine();
 
-        let returnDescription;
-        let returnValue = ""
+        let returnDescription: string;
+        let returnValue: string = "";
         if (this.method.returnValue && this.method.returnValue.type && this.method.returnValue.type !== "null") {
             if (this.method.returnValue.type === "function" && this.method.name === "extend") {
-                returnValue = TypeUtil.sapUiTypeToTSType(this.symbolContext.basename)
+                returnValue = TypeUtil.sapUiTypeToTSType(this.symbolContext.basename);
             } else if (this.method.name === "getProperty") {
-                returnValue = "any"
+                returnValue = "any";
             } else {
                 returnValue = TypeUtil.sapUiTypeToTSType(this.method.returnValue.type);
                 if (this.method.returnValue.description) {
@@ -48,18 +48,20 @@ export class MethodParser {
         this.writer.openBlockComment();
         this.writer.writeTsDocComment(this.method.description);
         if (this.method.since) {
-            this.writer.writeTsDocComment("@since " + this.method.since)
+            this.writer.writeTsDocComment("@since " + this.method.since);
         }
         if (this.method.parameters) {
             for (let param of this.method.parameters) {
                 this.writer.writeTsDocComment("@param " + param.name + " " + param.description);
             }
         }
-        if (returnDescription) this.writer.writeTsDocComment("@returns " + returnDescription);
+        if (returnDescription) {
+            this.writer.writeTsDocComment("@returns " + returnDescription);
+        }
 
         this.writer.closeBlockComment();
 
-        let matchingExceptions = MethodParser._exceptions.filter((e) => e.methodName === this.method.name && e.applicableReturnTypes.indexOf(returnValue) > -1 && e.applicableSignatures.indexOf(ParamParser.parseParams(this.method.parameters)) > -1)
+        let matchingExceptions = MethodParser._exceptions.filter((e) => e.methodName === this.method.name && e.applicableReturnTypes.indexOf(returnValue) > -1 && e.applicableSignatures.indexOf(ParamParser.parseParams(this.method.parameters)) > -1);
         let accessModifier = "";
         /*if (this.method.static) {
             accessModifier += " static";
@@ -70,7 +72,7 @@ export class MethodParser {
         }
 
         if (this.symbolContext.kind === "namespace") {
-            accessModifier = "function"
+            accessModifier = "function";
         }
 
         if (this.method.name === "define") {
@@ -160,23 +162,21 @@ function xmlfragment(sId: string, vFragment, oController?);
 //  Instantiates an XMLView of the given name and with the given id.
 function xmlview(vView): sap.ui.core.mvc.View;
 function xmlview(sId: string, vView): sap.ui.core.mvc.View; 
-            `
-            additionalMethods.split(/[\r\n]+/).forEach(line => this.writer.writeLine(line))
-            
+            `;
+            additionalMethods.split(/[\r\n]+/).forEach((line: string) => this.writer.writeLine(line));
+
         } else if (matchingExceptions.length === 1) {
-            let exception = matchingExceptions[0]
+            let exception = matchingExceptions[0];
             this.writer.writeLine(accessModifier + " " + exception.methodName + "(" + exception.usedSignature + "): " + exception.usedReturnType.replace("__returnValue__", returnValue) + ";");
         } else if (matchingExceptions.length > 1) {
-            throw "Too many exception matched method " + JSON.stringify(this.method);
+            throw new Error("Too many exception matched method " + JSON.stringify(this.method));
         } else {
 
             let line = accessModifier + " " + this.method.name + "(" + ParamParser.parseParams(this.method.parameters) + "): " + returnValue + ";";
-            this.writer.writeLine(line)
+            this.writer.writeLine(line);
         }
-
 
         return "";
     }
-
 
 }

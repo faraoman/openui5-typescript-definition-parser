@@ -1,5 +1,6 @@
 "use strict";
-const util_1 = require('../util');
+Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = require("../util");
 class MethodParser {
     constructor(writer, method, symbolContext) {
         this.writer = writer;
@@ -44,8 +45,9 @@ class MethodParser {
                 this.writer.writeTsDocComment("@param " + param.name + " " + param.description);
             }
         }
-        if (returnDescription)
+        if (returnDescription) {
             this.writer.writeTsDocComment("@returns " + returnDescription);
+        }
         this.writer.closeBlockComment();
         let matchingExceptions = MethodParser._exceptions.filter((e) => e.methodName === this.method.name && e.applicableReturnTypes.indexOf(returnValue) > -1 && e.applicableSignatures.indexOf(util_1.ParamParser.parseParams(this.method.parameters)) > -1);
         let accessModifier = "";
@@ -146,14 +148,14 @@ function xmlfragment(sId: string, vFragment, oController?);
 function xmlview(vView): sap.ui.core.mvc.View;
 function xmlview(sId: string, vView): sap.ui.core.mvc.View; 
             `;
-            additionalMethods.split(/[\r\n]+/).forEach(line => this.writer.writeLine(line));
+            additionalMethods.split(/[\r\n]+/).forEach((line) => this.writer.writeLine(line));
         }
         else if (matchingExceptions.length === 1) {
             let exception = matchingExceptions[0];
             this.writer.writeLine(accessModifier + " " + exception.methodName + "(" + exception.usedSignature + "): " + exception.usedReturnType.replace("__returnValue__", returnValue) + ";");
         }
         else if (matchingExceptions.length > 1) {
-            throw "Too many exception matched method " + JSON.stringify(this.method);
+            throw new Error("Too many exception matched method " + JSON.stringify(this.method));
         }
         else {
             let line = accessModifier + " " + this.method.name + "(" + util_1.ParamParser.parseParams(this.method.parameters) + "): " + returnValue + ";";

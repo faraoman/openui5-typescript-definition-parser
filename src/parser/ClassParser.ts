@@ -1,24 +1,23 @@
-import {IndentedOutputWriter, ParamParser} from '../util';
-import {PropertyParser} from "./PropertyParser";
-import {MethodParser} from "./MethodParser";
-
+import { IndentedOutputWriter, ParamParser } from "../util";
+import { MethodParser } from "./MethodParser";
+import { PropertyParser } from "./PropertyParser";
 
 export class ClassParser {
     constructor(protected writer: IndentedOutputWriter, protected classSymbol: ts_gen.api.Symbol, protected namespacePrefix: string) {
 
     }
 
-    public getNestedNamespaceName() {
-        let nestedNamespaceName = this.classSymbol.name.substring(0, this.classSymbol.name.length - this.classSymbol.basename.length - 1)
-        return nestedNamespaceName
+    public getNestedNamespaceName(): string {
+        let nestedNamespaceName: string = this.classSymbol.name.substring(0, this.classSymbol.name.length - this.classSymbol.basename.length - 1);
+        return nestedNamespaceName;
     }
 
-    public generate() {
-        let nestedNamespaceName = null;
+    public generate(): void {
+        let nestedNamespaceName: string = null;
         if (this.getNestedNamespaceName() !== this.namespacePrefix && this.classSymbol.name !== this.namespacePrefix) {
-            nestedNamespaceName = this.classSymbol.name.substring(this.namespacePrefix.length + 1)
-            nestedNamespaceName = nestedNamespaceName.substring(0, nestedNamespaceName.length - this.classSymbol.basename.length - 1)
-            this.writer.writeLine("declare namespace " + nestedNamespaceName + "{")
+            nestedNamespaceName = this.classSymbol.name.substring(this.namespacePrefix.length + 1);
+            nestedNamespaceName = nestedNamespaceName.substring(0, nestedNamespaceName.length - this.classSymbol.basename.length - 1);
+            this.writer.writeLine("declare namespace " + nestedNamespaceName + "{");
             this.writer.increaseIndent();
         }
 
@@ -27,16 +26,16 @@ export class ClassParser {
         this.writer.writeTsDocComment("@resource " + this.classSymbol.resource);
         this.writer.closeBlockComment();
 
-        let extendsModifier = "";
+        let extendsModifier: string = "";
         if (this.classSymbol.extends) {
-            let e = this.classSymbol.extends;
-            if(e === "sap.ui.core.Toolbar"){
-                e =  "sap.m.Toolbar"
+            let e: string = this.classSymbol.extends;
+            if (e === "sap.ui.core.Toolbar") {
+                e = "sap.m.Toolbar";
             }
             extendsModifier = " extends " + e;
         }
 
-        let abstractModifier = "";
+        let abstractModifier: string = "";
 
         if (this.classSymbol.abstract || this.classSymbol.basename === "MultiComboBox") {
             abstractModifier = "abstract ";
@@ -47,7 +46,7 @@ export class ClassParser {
 
         if (this.classSymbol.properties) {
             for (let property of this.classSymbol.properties) {
-                let propertyParser = new PropertyParser(this.writer, property, this.classSymbol);
+                let propertyParser: PropertyParser = new PropertyParser(this.writer, property, this.classSymbol);
                 propertyParser.generate();
             }
         }
@@ -73,22 +72,19 @@ export class ClassParser {
         this.writer.newLine();
         this.writer.newLine();
 
-
         if (this.classSymbol.methods) {
             for (let method of this.classSymbol.methods) {
-                let methodParser = new MethodParser(this.writer, method, this.classSymbol);
+                let methodParser: MethodParser = new MethodParser(this.writer, method, this.classSymbol);
                 methodParser.generate();
             }
         }
-
-
 
         this.writer.decreaseIndent();
         this.writer.writeLine("}");
 
         if (nestedNamespaceName) {
             this.writer.decreaseIndent();
-            this.writer.writeLine("}")
+            this.writer.writeLine("}");
         }
 
     }

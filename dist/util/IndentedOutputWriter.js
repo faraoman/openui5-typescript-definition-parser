@@ -1,8 +1,14 @@
 "use strict";
-const fs_1 = require('fs');
-const fs_2 = require('fs');
-const path_1 = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = require("fs");
+const fs_2 = require("fs");
+const path_1 = require("path");
 class IndentedOutputWriter {
+    /**
+     * Create a new IndentedOutputWriter writing content into the specified output file path
+     * @constructs IndentedOutputWriter
+     * @param {string} outputFilePath Destination file
+     */
     constructor(outputFilePath) {
         this.outputFilePath = outputFilePath;
         this.indentChars = "  ";
@@ -18,9 +24,15 @@ class IndentedOutputWriter {
         }
         this.filehandle = fs_1.openSync(outputFilePath, "w");
     }
+    /**
+     * Increase indentation by 1 level
+     */
     increaseIndent() {
         this.indentLevel++;
     }
+    /**
+     * Decrease indentation by 1 level
+     */
     decreaseIndent() {
         this.indentLevel--;
     }
@@ -48,15 +60,21 @@ class IndentedOutputWriter {
             }
         }
     }
+    /**
+     * Write open block comment (/**)
+     */
     openBlockComment() {
         this.writeLine("/**");
     }
+    /**
+     * Write close block comment (*\/)
+     */
     closeBlockComment() {
         this.writeLine("*/");
     }
     writeTsDocComment(line) {
         if (line) {
-            this.writeChunked((str) => { return " * " + str; }, line.replace(/[\r\n]/g, ''));
+            this.writeChunked((str) => { return " * " + str; }, line.replace(/[\r\n]/g, ""));
         }
     }
     newLine() {

@@ -1,12 +1,12 @@
-import {IndentedOutputWriter} from '../util';
-import {NamespaceParser} from './NamespaceParser';
-import {get} from 'https';
-import {readFileSync} from 'fs';
+import { readFileSync } from "fs";
+import { get } from "https";
+import { IndentedOutputWriter } from "../util";
+import { NamespaceParser } from "./NamespaceParser";
 export class LibraryParser {
-    allNamespaces: ts_gen.api.Symbol[];
-    jQueryAdditionalContent: string;
+    public allNamespaces: ts_gen.api.Symbol[];
+    public jQueryAdditionalContent: string;
 
-    jQuerySapDefs = `
+    public jQuerySapDefs: string = `
 interface Ui5Logger {
     //Allows to add a new LogListener that will be notified for new log entries.
     addLogListener(oListener)
@@ -188,39 +188,74 @@ interface JquerySap {
 interface JQueryStatic {
     sap: JquerySap
 }
-    `
+    `;
 
     constructor(protected writer: IndentedOutputWriter, protected symbols: ts_gen.api.Symbol[], protected namespaces: ts_gen.api.Symbol[]) {
         this.allNamespaces = namespaces.slice(0);
     }
 
-    public generate() {
-        let rootNamespaces = this.namespaces.filter((e) => e.name === "sap")
-        get("https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/jquery/jquery.d.ts", (res) => {
-            this.jQueryAdditionalContent = '';
+    public buildNamespaceParser(ns: ts_gen.api.Symbol, parentCtx: string): NamespaceParser {
+        console.log(ns.name);
 
-            res.on('data', (chunk) => {
+        if (ns.name === "sap.ui.core.mvc") {
+            console.log();
+        }
+
+        let namespaceParser: NamespaceParser = new NamespaceParser(this.writer, ns, parentCtx);
+
+        let containedClasses: ts_gen.api.Symbol[] = this.filterMatching("class", ns);
+        let containedNamespaces: ts_gen.api.Symbol[] = this.filterMatching("namespace", ns);
+        let containedInterfaces: ts_gen.api.Symbol[] = this.filterMatching("interface", ns);
+        let containedEnums: ts_gen.api.Symbol[] = this.filterMatching("enum", ns);
+
+        namespaceParser.addContainedClasses(containedClasses);
+        namespaceParser.addContainedInterfaces(containedInterfaces);
+        namespaceParser.addContainedEnums(containedEnums);
+
+        if (ns.name === "jQuery") {
+            namespaceParser.setAdditionalContent(this.jQueryAdditionalContent);
+        }
+
+        let parsedSymbols: ts_gen.api.Symbol[] = containedClasses.concat(containedNamespaces, containedInterfaces, containedEnums);
+        for (let i: number = parsedSymbols.length - 1; i >= 0; i--) {
+            this.symbols.splice(this.symbols.indexOf(parsedSymbols[i]), 1);
+        }
+
+        for (let i: number = containedNamespaces.length - 1; i >= 0; i--) {
+            this.namespaces.splice(this.namespaces.indexOf(containedNamespaces[i]), 1);
+        }
+
+        namespaceParser.addContainedNamespaceParsers(containedNamespaces.map((containedNamespace: ts_gen.api.Symbol) => this.buildNamespaceParser(containedNamespace, ns.name)));
+
+        return namespaceParser;
+    }
+
+    public generate(): void {
+        let rootNamespaces: ts_gen.api.Symbol[] = this.namespaces.filter((e) => e.name === "sap");
+        get("https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/jquery/jquery.d.ts", (res) => {
+            this.jQueryAdditionalContent = "";
+
+            res.on("data", (chunk) => {
                 this.jQueryAdditionalContent += chunk;
             });
 
-            res.on('end', () => {
-                let jQueryLines = this.jQueryAdditionalContent.split(/[\r\n]+/)
-                jQueryLines.forEach((line) => this.writer.writeLine(line))
+            res.on("end", () => {
+                let jQueryLines: string[] = this.jQueryAdditionalContent.split(/[\r\n]+/);
+                jQueryLines.forEach((line) => this.writer.writeLine(line));
 
-                this.writer.newLine()
-                this.writer.newLine()
-                this.writer.newLine()
+                this.writer.newLine();
+                this.writer.newLine();
+                this.writer.newLine();
 
                 this.jQuerySapDefs.split(/[\r\n]+/).forEach((line) => {
                     this.writer.writeLine(line);
-                })
+                });
 
                 for (let ns of rootNamespaces) {
                     this.buildNamespaceParser(ns, "").generate();
                 }
             });
         });
-
 
         console.log("Unmatched symbols: " + this.symbols.map((e) => e.name).reduce((a, b) => a + ", " + b));
     }
@@ -230,40 +265,5 @@ interface JQueryStatic {
             let rootSpacesMatching = this.allNamespaces.filter((n) => e.name.startsWith(n.name) && n.name !== e.name).sort((a, b) => b.name.length - a.name.length);
             return e.kind === kind && e.name.startsWith(namespace.name) && rootSpacesMatching.length && rootSpacesMatching[0].name.length === namespace.name.length && e.name !== namespace.name;
         });
-    }
-
-    public buildNamespaceParser(ns: ts_gen.api.Symbol, parentCtx: string): NamespaceParser {
-        console.log(ns.name)
-
-        if (ns.name === "sap.ui.core.mvc") {
-            console.log();
-        }
-
-        let namespaceParser = new NamespaceParser(this.writer, ns, parentCtx)
-
-        let containedClasses = this.filterMatching("class", ns)
-        let containedNamespaces = this.filterMatching("namespace", ns);
-        let containedInterfaces = this.filterMatching("interface", ns)
-        let containedEnums = this.filterMatching("enum", ns)
-
-        namespaceParser.addContainedClasses(containedClasses)
-        namespaceParser.addContainedInterfaces(containedInterfaces)
-        namespaceParser.addContainedEnums(containedEnums);
-
-        if(ns.name === "jQuery"){
-            namespaceParser.setAdditionalContent(this.jQueryAdditionalContent);
-        }
-
-        let parsedSymbols = containedClasses.concat(containedNamespaces, containedInterfaces, containedEnums)
-        for (var i = parsedSymbols.length - 1; i >= 0; i--) {
-            this.symbols.splice(this.symbols.indexOf(parsedSymbols[i]), 1);
-        }
-
-        for (var i = containedNamespaces.length - 1; i >= 0; i--) {
-            this.namespaces.splice(this.namespaces.indexOf(containedNamespaces[i]), 1);
-        }
-        namespaceParser.addContainedNamespaceParsers(containedNamespaces.map((containedNamespace) => this.buildNamespaceParser(containedNamespace, ns.name)))
-
-        return namespaceParser
     }
 }

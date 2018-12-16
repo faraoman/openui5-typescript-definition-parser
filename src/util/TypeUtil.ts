@@ -1,14 +1,13 @@
-export interface TypeConfig {
+export interface ITypeConfig {
     ignoredTypes: string[];
     typeMapping: { [id: string]: string };
 }
 export class TypeUtil {
     public static namespaces: string[];
-    public static _config: TypeConfig;
+    public static _config: ITypeConfig;
 
-
-    public static sapUiTypeToTSType(type: string) {
-        let parts;
+    public static sapUiTypeToTSType(type: string): any {
+        let parts: any[];
         if (type.indexOf("|") > 0) {
             parts = type.split("|");
         } else {
@@ -17,15 +16,15 @@ export class TypeUtil {
 
         return parts.map((part) => {
             if (!this.namespaces.length) {
-                throw "no namespaces defined"
+                throw new Error("no namespaces defined");
             }
 
-            let arrayRegex = new RegExp("^[Aa]rray\\((.*)\\)$")
+            let arrayRegex: RegExp = new RegExp("^[Aa]rray\\((.*)\\)$");
             if (arrayRegex.exec(part)) {
                 return arrayRegex.exec(part)[1] + "[]";
             }
 
-            let isNamespace = this.namespaces.filter((e) => e.trim().toLowerCase().endsWith(part.trim().toLowerCase())).length > 0;
+            let isNamespace: boolean = this.namespaces.filter((e) => e.trim().toLowerCase().endsWith(part.trim().toLowerCase())).length > 0;
 
             if (this._config.ignoredTypes.indexOf(part) > -1) {
                 return "any";
@@ -40,15 +39,15 @@ export class TypeUtil {
             }
 
             if (part.indexOf("jQuery") === 0) {
-                return "any"
+                return "any";
             }
 
-            var matchingTypes = Object.keys(this._config.typeMapping).filter((e) => {
-                return e === part
+            let matchingTypes: string[] = Object.keys(this._config.typeMapping).filter((e) => {
+                return e === part;
             });
 
             if (matchingTypes.length > 1) {
-                throw "Found multiple matching types for \"" + part + "\": " + JSON.stringify(matchingTypes);
+                throw new Error("Found multiple matching types for \"" + part + "\": " + JSON.stringify(matchingTypes));
             }
 
             if (matchingTypes.length === 1) {

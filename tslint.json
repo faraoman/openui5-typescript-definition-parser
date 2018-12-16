@@ -1,0 +1,14 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "max-line-length": false,
+        "variable-name": false,
+        "prefer-const": false,
+        "no-console": false,
+        "no-trailing-whitespace": false,
+        "eofline": false,
+        "arrow-return-shorthand": false,
+        "trailing-comma": false,
+        "object-literal-sort-keys": false
+    }
+}

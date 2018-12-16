@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class TypeUtil {
     static sapUiTypeToTSType(type) {
         let parts;
@@ -10,7 +11,7 @@ class TypeUtil {
         }
         return parts.map((part) => {
             if (!this.namespaces.length) {
-                throw "no namespaces defined";
+                throw new Error("no namespaces defined");
             }
             let arrayRegex = new RegExp("^[Aa]rray\\((.*)\\)$");
             if (arrayRegex.exec(part)) {
@@ -29,11 +30,11 @@ class TypeUtil {
             if (part.indexOf("jQuery") === 0) {
                 return "any";
             }
-            var matchingTypes = Object.keys(this._config.typeMapping).filter((e) => {
+            let matchingTypes = Object.keys(this._config.typeMapping).filter((e) => {
                 return e === part;
             });
             if (matchingTypes.length > 1) {
-                throw "Found multiple matching types for \"" + part + "\": " + JSON.stringify(matchingTypes);
+                throw new Error("Found multiple matching types for \"" + part + "\": " + JSON.stringify(matchingTypes));
             }
             if (matchingTypes.length === 1) {
                 return this._config.typeMapping[matchingTypes[0]];

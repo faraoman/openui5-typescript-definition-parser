@@ -1,4 +1,4 @@
-import { IndentedOutputWriter } from '../util';
+import { IndentedOutputWriter } from "../util";
 export declare class NamespaceParser {
     protected writer: IndentedOutputWriter;
     protected namespace: ts_gen.api.Symbol;

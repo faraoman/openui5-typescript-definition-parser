@@ -1,4 +1,4 @@
-import { IndentedOutputWriter } from '../util';
+import { IndentedOutputWriter } from "../util";
 export declare class ClassParser {
     protected writer: IndentedOutputWriter;
     protected classSymbol: ts_gen.api.Symbol;

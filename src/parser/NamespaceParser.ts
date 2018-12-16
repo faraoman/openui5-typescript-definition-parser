@@ -1,9 +1,9 @@
-import {IndentedOutputWriter} from '../util';
-import {PropertyParser} from "./PropertyParser";
-import {MethodParser} from "./MethodParser";
-import {ClassParser} from "./ClassParser";
-import {InterfaceParser} from "./InterfaceParser";
-import {EnumParser} from "./EnumParser"
+import { IndentedOutputWriter } from "../util";
+import { ClassParser } from "./ClassParser";
+import { EnumParser } from "./EnumParser";
+import { InterfaceParser } from "./InterfaceParser";
+import { MethodParser } from "./MethodParser";
+import { PropertyParser } from "./PropertyParser";
 export class NamespaceParser {
     private _namespaceParsers: NamespaceParser[] = [];
     private _enums: ts_gen.api.Symbol[] = [];
@@ -47,7 +47,7 @@ export class NamespaceParser {
             interfaceParser.generate();
         }
         for (let containedEnum of this._enums) {
-            let enumParser = new EnumParser(this.writer, containedEnum)
+            let enumParser = new EnumParser(this.writer, containedEnum);
             enumParser.generate();
         }
 
@@ -61,22 +61,22 @@ export class NamespaceParser {
         this.writer.writeLine("}");
     }
 
-    public addContainedNamespaceParsers(namespaces: NamespaceParser[]) {
-        this._namespaceParsers = this._namespaceParsers.concat(namespaces)
+    public addContainedNamespaceParsers(namespaces: NamespaceParser[]): void {
+        this._namespaceParsers = this._namespaceParsers.concat(namespaces);
     }
 
-    public addContainedClasses(classes: ts_gen.api.Symbol[]) {
-        this._classes = this._classes.concat(classes)
+    public addContainedClasses(classes: ts_gen.api.Symbol[]): void {
+        this._classes = this._classes.concat(classes);
     }
-    public addContainedInterfaces(interfaces: ts_gen.api.Symbol[]) {
-        this._interfaces = this._interfaces.concat(interfaces)
-    }
-
-    public addContainedEnums(enums: ts_gen.api.Symbol[]) {
-        this._enums = this._enums.concat(enums)
+    public addContainedInterfaces(interfaces: ts_gen.api.Symbol[]): void {
+        this._interfaces = this._interfaces.concat(interfaces);
     }
 
-    public setAdditionalContent(content: string){
+    public addContainedEnums(enums: ts_gen.api.Symbol[]): void {
+        this._enums = this._enums.concat(enums);
+    }
+
+    public setAdditionalContent(content: string): void {
         this._additionalContent = content;
     }
 }

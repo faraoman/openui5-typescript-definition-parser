@@ -1,4 +1,4 @@
-import { IndentedOutputWriter } from '../util';
+import { IndentedOutputWriter } from "../util";
 export declare class EnumParser {
     protected writer: IndentedOutputWriter;
     protected enumSymbol: ts_gen.api.Symbol;

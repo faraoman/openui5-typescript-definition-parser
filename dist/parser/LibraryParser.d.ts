@@ -1,5 +1,5 @@
-import { IndentedOutputWriter } from '../util';
-import { NamespaceParser } from './NamespaceParser';
+import { IndentedOutputWriter } from "../util";
+import { NamespaceParser } from "./NamespaceParser";
 export declare class LibraryParser {
     protected writer: IndentedOutputWriter;
     protected symbols: ts_gen.api.Symbol[];
@@ -8,7 +8,7 @@ export declare class LibraryParser {
     jQueryAdditionalContent: string;
     jQuerySapDefs: string;
     constructor(writer: IndentedOutputWriter, symbols: ts_gen.api.Symbol[], namespaces: ts_gen.api.Symbol[]);
+    buildNamespaceParser(ns: ts_gen.api.Symbol, parentCtx: string): NamespaceParser;
     generate(): void;
     private filterMatching(kind, namespace);
-    buildNamespaceParser(ns: ts_gen.api.Symbol, parentCtx: string): NamespaceParser;
 }

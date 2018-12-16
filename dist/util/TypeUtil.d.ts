@@ -1,4 +1,4 @@
-export interface TypeConfig {
+export interface ITypeConfig {
     ignoredTypes: string[];
     typeMapping: {
         [id: string]: string;
@@ -6,6 +6,6 @@ export interface TypeConfig {
 }
 export declare class TypeUtil {
     static namespaces: string[];
-    static _config: TypeConfig;
+    static _config: ITypeConfig;
     static sapUiTypeToTSType(type: string): any;
 }

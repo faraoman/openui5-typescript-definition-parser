@@ -45,7 +45,6 @@
         "objec": "any",
         "object[]": "any[]",
         "Object": "any",
-        "object": "any",
         "map": "any",
         "Map": "any",
         "Promise": "JQueryPromise<any>",
