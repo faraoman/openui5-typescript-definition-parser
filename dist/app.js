@@ -4,7 +4,6 @@ const fs_1 = require("fs");
 const https_1 = require("https");
 const parser_1 = require("./parser");
 const util_1 = require("./util");
-const util_2 = require("./util");
 function parseDefinitions(config) {
     if (!config) {
         config = {};
@@ -92,7 +91,7 @@ function parseDefinitions(config) {
                         return a.name.length - b.name.length;
                     });
                     let j = 0;
-                    let writer = new util_2.IndentedOutputWriter(config.outFilePath);
+                    let writer = new util_1.IndentedOutputWriter(config.outFilePath);
                     new parser_1.LibraryParser(writer, symbolsSortedByLength, namespaces).generate();
                 }
             });

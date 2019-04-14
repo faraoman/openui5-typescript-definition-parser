@@ -10,5 +10,5 @@ export declare class LibraryParser {
     constructor(writer: IndentedOutputWriter, symbols: ts_gen.api.Symbol[], namespaces: ts_gen.api.Symbol[]);
     buildNamespaceParser(ns: ts_gen.api.Symbol, parentCtx: string): NamespaceParser;
     generate(): void;
-    private filterMatching(kind, namespace);
+    private filterMatching;
 }

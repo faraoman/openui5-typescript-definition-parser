@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const PropertyParser_1 = require("./PropertyParser");
 const MethodParser_1 = require("./MethodParser");
+const PropertyParser_1 = require("./PropertyParser");
 class InterfaceParser {
     constructor(writer, interfaceSymbol, namespacePrefix) {
         this.writer = writer;

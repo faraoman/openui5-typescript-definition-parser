@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const PropertyParser_1 = require("./PropertyParser");
-const MethodParser_1 = require("./MethodParser");
 const ClassParser_1 = require("./ClassParser");
-const InterfaceParser_1 = require("./InterfaceParser");
 const EnumParser_1 = require("./EnumParser");
+const InterfaceParser_1 = require("./InterfaceParser");
+const MethodParser_1 = require("./MethodParser");
+const PropertyParser_1 = require("./PropertyParser");
 class NamespaceParser {
     constructor(writer, namespace, parentCtx) {
         this.writer = writer;
