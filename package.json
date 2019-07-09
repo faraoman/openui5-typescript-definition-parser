@@ -24,6 +24,6 @@
   "homepage": "https://github.com/maylukas/sapui5-typescript-definition-generator#readme",
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^10.14.4"
+    "@types/node": "^10.14.10"
   }
 }
